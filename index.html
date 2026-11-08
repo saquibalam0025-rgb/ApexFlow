@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexFlow | High-Performance Cybernetic Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            950: '#030712',
+                            900: '#060913',
+                            800: '#0b1120',
+                            700: '#151c2f',
+                            600: '#1e293b',
+                        },
+                        apex: {
+                            cyan: '#00f2fe',
+                            blue: '#4facfe',
+                            violet: '#a855f7',
+                            pink: '#ec4899',
+                            emerald: '#10b981',
+                            glow: 'rgba(0, 242, 254, 0.25)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Gamification -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .bg-grid-pattern {
+            background-size: 36px 36px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 242, 254, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 242, 254, 0.04) 1px, transparent 1px);
+        }
+        .glass-panel {
+            background: rgba(11, 17, 32, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(0, 242, 254, 0.45);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.22), inset 0 0 15px rgba(0, 242, 254, 0.08);
+            transform: translateY(-2px);
+        }
+        .glow-text {
+            text-shadow: 0 0 18px rgba(0, 242, 254, 0.7);
+        }
+        .glow-box {
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.35);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f2fe;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.35; transform: scale(1); }
+            50% { opacity: 0.75; transform: scale(1.06); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 6s infinite ease-in-out;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+        .scanline-effect {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.8), transparent);
+            animation: scanline 7s linear infinite;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-apex-cyan selection:text-dark-950 bg-grid-pattern relative">
+
+    <!-- Ambient Glow Orbs -->
+    <div class="fixed top-0 left-1/4 w-[550px] h-[550px] bg-apex-cyan/10 rounded-full blur-[140px] pointer-events-none animate-pulse-glow"></div>
+    <div class="fixed bottom-0 right-1/4 w-[550px] h-[550px] bg-apex-violet/15 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" style="animation-delay: 3s;"></div>
+
+    <!-- AUTHENTICATION MODAL / SCREEN -->
+    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/90 backdrop-blur-2xl transition-opacity duration-500">
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl relative overflow-hidden shadow-2xl">
+            <div class="scanline-effect"></div>
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-apex-cyan/25 rounded-full blur-3xl"></div>
+            
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-apex-cyan via-apex-blue to-apex-violet text-dark-950 font-black text-2xl shadow-lg glow-box mb-4">
+                    <i class="fa-solid fa-atom animate-spin" style="animation-duration: 12s;"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold tracking-tight text-white">Apex<span class="text-apex-cyan glow-text">Flow</span></h1>
+                <p class="text-slate-400 text-xs tracking-wider uppercase font-mono mt-2">Next-Gen Cybernetic Matrix OS</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="flex rounded-xl bg-dark-800/80 p-1 mb-6 border border-slate-800">
+                <button id="tab-login" onclick="switchAuthMode('login')" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-apex-cyan text-dark-950 shadow transition-all">Sign In</button>
+                <button id="tab-signup" onclick="switchAuthMode('signup')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all">Create Account</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+                <div id="name-field" class="hidden space-y-1">
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Operator Designation</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><i class="fa-regular fa-id-badge"></i></span>
+                        <input type="text" id="auth-name" placeholder="Cyber Operator" class="w-full pl-10 pr-4 py-3 bg-dark-800/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-apex-cyan text-sm transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Network Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><i class="fa-regular fa-envelope"></i></span>
+                        <input type="email" id="auth-email" required placeholder="operator@apexflow.ai" class="w-full pl-10 pr-4 py-3 bg-dark-800/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-apex-cyan text-sm transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Access Security Key</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><i class="fa-solid fa-key"></i></span>
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 bg-dark-800/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-apex-cyan text-sm transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 px-4 bg-gradient-to-r from-apex-cyan via-apex-blue to-apex-violet text-dark-950 font-bold rounded-xl shadow-lg glow-box transition-all transform active:scale-[0.98]">
+                    Initialize Workspace Link
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-slate-800"></div>
+                    <span class="flex-shrink mx-4 text-slate-500 text-[10px] font-mono uppercase tracking-widest">Or authentication method</span>
+                    <div class="flex-grow border-t border-slate-800"></div>
+                </div>
+
+                <button onclick="handleGoogleSignIn()" class="mt-3 w-full flex items-center justify-center gap-3 py-3 px-4 bg-dark-800 hover:bg-dark-700 border border-slate-700 rounded-xl text-white text-sm font-semibold transition-all">
+                    <i class="fa-brands fa-google text-red-400"></i> Continue with Google SSO
+                </button>
+                <button onclick="quickGuestAccess()" class="mt-2 w-full py-2.5 px-4 text-slate-400 hover:text-apex-cyan text-xs font-mono tracking-wider transition-all">
+                    ⚡ Instant Guest Access (Offline Storage)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION WORKSPACE -->
+    <div id="app-container" class="hidden min-h-screen flex flex-col lg:flex-row relative z-10">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-full lg:w-72 glass-panel border-r border-slate-800 flex flex-col justify-between p-6 z-30 shrink-0">
+            <div>
+                <!-- Brand Header -->
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-apex-cyan via-apex-blue to-apex-violet text-dark-950 font-black text-xl shadow-md glow-box">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold tracking-tight text-white">Apex<span class="text-apex-cyan glow-text">Flow</span></h2>
+                        <span class="text-[9px] font-mono text-apex-cyan tracking-widest px-2 py-0.5 rounded bg-apex-cyan/10 border border-apex-cyan/30 uppercase">Cyber OS v4.5</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-apex-cyan/10 text-apex-cyan border border-apex-cyan/30 shadow-sm">
+                        <i class="fa-solid fa-chart-line w-5 text-center"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all">
+                        <i class="fa-solid fa-list-check w-5 text-center"></i> Tasks Matrix
+                    </button>
+                    <button onclick="switchTab('habits')" id="nav-habits" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all">
+                        <i class="fa-solid fa-fire w-5 text-center text-amber-400"></i> Habit Protocols
+                    </button>
+                    <button onclick="switchTab('pomodoro')" id="nav-pomodoro" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all">
+                        <i class="fa-solid fa-stopwatch w-5 text-center text-apex-blue"></i> Focus Chamber
+                    </button>
+                    <button onclick="switchTab('ai')" id="nav-ai" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all relative">
+                        <i class="fa-solid fa-brain w-5 text-center text-apex-violet"></i> ApexFlow AI
+                        <span class="ml-auto text-[9px] font-mono px-1.5 py-0.5 bg-apex-violet/20 text-apex-violet rounded border border-apex-violet/30">Voice + Gemini</span>
+                    </button>
+                    <button onclick="switchTab('setup')" id="nav-setup" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all">
+                        <i class="fa-solid fa-sliders w-5 text-center text-emerald-400"></i> Architecture Guide
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Operator Profile & Gamification Footer -->
+            <div class="pt-6 border-t border-slate-800/80 space-y-4">
+                <!-- User XP Level Progress -->
+                <div class="bg-dark-800/80 p-3 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="font-mono text-apex-cyan font-bold" id="user-rank-label">Rank: Apprentice</span>
+                        <span class="text-slate-400 font-mono" id="user-xp-label">0 / 500 XP</span>
+                    </div>
+                    <div class="w-full h-2 bg-dark-950 rounded-full overflow-hidden border border-slate-800">
+                        <div id="user-xp-bar" class="h-full bg-gradient-to-r from-apex-cyan to-apex-violet transition-all duration-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-dark-800/60 border border-slate-800">
+                    <div id="user-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-apex-violet to-apex-cyan flex items-center justify-center font-bold text-white text-sm shadow">
+                        OP
+                    </div>
+                    <div class="overflow-hidden flex-1">
+                        <h4 id="user-display-name" class="text-sm font-semibold text-white truncate">Operator</h4>
+                        <p id="user-display-email" class="text-[11px] text-slate-400 truncate">operator@apexflow.ai</p>
+                    </div>
+                </div>
+
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-dark-800 hover:bg-red-500/10 hover:text-red-400 text-slate-400 rounded-xl text-xs font-semibold border border-slate-700/80 hover:border-red-500/30 transition-all">
+                    <i class="fa-solid fa-power-off"></i> Terminate Session
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN DISPLAY PANEL -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-4 lg:p-8">
+            
+            <!-- Dynamic Top Header -->
+            <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800">
+                <div>
+                    <h2 id="page-title" class="text-2xl lg:text-3xl font-extrabold tracking-tight text-white">Command Dashboard</h2>
+                    <p id="page-subtitle" class="text-xs lg:text-sm text-slate-400 mt-0.5">Systems synchronized. Neural matrix online.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Streak Count Badge -->
+                    <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold">
+                        <i class="fa-solid fa-fire text-amber-400 animate-bounce"></i>
+                        <span id="header-streak-count">1</span> Day Streak
+                    </div>
+                    <!-- Quick AI Button -->
+                    <button onclick="switchTab('ai')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-apex-violet/20 to-apex-cyan/20 border border-apex-violet/30 text-apex-cyan hover:bg-apex-violet/30 text-xs font-bold transition-all shadow">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> ApexFlow AI
+                    </button>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-content-dashboard" class="tab-content space-y-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden glass-panel-hover">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Completed</span>
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-2">
+                            <h3 id="stat-completed-tasks" class="text-3xl font-extrabold text-white">0</h3>
+                            <span class="text-xs text-emerald-400 font-medium">tasks done</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden glass-panel-hover">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Active Objectives</span>
+                            <div class="w-9 h-9 rounded-xl bg-apex-cyan/10 text-apex-cyan flex items-center justify-center border border-apex-cyan/20">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-2">
+                            <h3 id="stat-active-tasks" class="text-3xl font-extrabold text-white">0</h3>
+                            <span class="text-xs text-apex-cyan font-medium">in queue</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden glass-panel-hover">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Accumulated XP</span>
+                            <div class="w-9 h-9 rounded-xl bg-apex-violet/10 text-apex-violet flex items-center justify-center border border-apex-violet/20">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-2">
+                            <h3 id="stat-total-xp" class="text-3xl font-extrabold text-white">0</h3>
+                            <span class="text-xs text-apex-violet font-medium">points</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden glass-panel-hover">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Personal Record</span>
+                            <div class="w-9 h-9 rounded-xl bg-apex-pink/10 text-apex-pink flex items-center justify-center border border-apex-pink/20">
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-2">
+                            <h3 id="stat-personal-record" class="text-3xl font-extrabold text-white">0</h3>
+                            <span class="text-xs text-apex-pink font-medium">best day</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Task Creation & AI Strategic Advice -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-panel p-6 rounded-3xl lg:col-span-2 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-plus text-apex-cyan"></i> Quick Objective Dispatcher
+                                </h3>
+                                <span class="text-xs font-mono text-slate-400">Add to operational list</span>
+                            </div>
+                            <form onsubmit="handleQuickAddTask(event)" class="space-y-4">
+                                <div class="flex gap-2">
+                                    <input type="text" id="quick-task-title" required placeholder="Enter new operational objective..." class="flex-1 px-4 py-3 bg-dark-800/80 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-apex-cyan text-sm">
+                                    <select id="quick-task-priority" class="px-3 py-3 bg-dark-800/80 border border-slate-700/80 rounded-xl text-slate-300 focus:outline-none focus:border-apex-cyan text-xs font-semibold">
+                                        <option value="Normal">Normal</option>
+                                        <option value="High">High</option>
+                                        <option value="Urgent">Urgent</option>
+                                    </select>
+                                    <button type="submit" class="px-6 py-3 bg-apex-cyan hover:bg-apex-cyan/90 text-dark-950 font-bold rounded-xl text-xs shadow-lg glow-box transition-all">
+                                        Deploy
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-slate-800">
+                            <h4 class="text-xs font-mono font-bold uppercase text-slate-400 mb-3">Pending High-Priority Queue</h4>
+                            <div id="dashboard-recent-tasks" class="space-y-2">
+                                <div class="text-slate-500 text-xs italic">No urgent objectives pending.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Banner -->
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col justify-between bg-gradient-to-b from-dark-800/90 to-apex-violet/10 border-apex-violet/30 relative">
+                        <div>
+                            <div class="flex items-center gap-2 text-apex-violet font-bold text-xs uppercase font-mono mb-3">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Strategic AI Counsel
+                            </div>
+                            <h4 id="ai-insight-title" class="text-white font-bold text-base mb-2">Calculating Optimal Strategy...</h4>
+                            <p id="ai-insight-text" class="text-slate-300 text-xs leading-relaxed">
+                                ApexFlow AI is analyzing your current active objectives to compute optimal focus windows...
+                            </p>
+                        </div>
+                        <button onclick="triggerAIAnalysis()" class="mt-6 w-full py-3 px-4 bg-apex-violet/20 hover:bg-apex-violet/30 border border-apex-violet/40 text-apex-violet rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rotate"></i> Re-Calculate Strategy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TASKS MATRIX -->
+            <div id="tab-content-tasks" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-2 bg-dark-800 p-1.5 rounded-xl border border-slate-800">
+                        <button onclick="filterTasks('all')" id="filter-all" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-apex-cyan text-dark-950 transition-all">All Objectives</button>
+                        <button onclick="filterTasks('active')" id="filter-active" class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">Active</button>
+                        <button onclick="filterTasks('completed')" id="filter-completed" class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">Completed</button>
+                    </div>
+                    <button onclick="openNewTaskModal()" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-apex-cyan to-apex-blue text-dark-950 font-bold rounded-xl text-xs shadow glow-box transition-all">
+                        <i class="fa-solid fa-plus"></i> New Task Objective
+                    </button>
+                </div>
+
+                <div id="tasks-list-container" class="space-y-3">
+                    <!-- Dynamic tasks rendering -->
+                </div>
+            </div>
+
+            <!-- TAB 3: HABIT PROTOCOLS -->
+            <div id="tab-content-habits" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-fire text-amber-400"></i> Habit Continuity Protocols
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">Complete habits daily to stack XP points and build unbreakable streaks.</p>
+                        </div>
+                        <button onclick="openNewHabitModal()" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 border border-slate-700 text-white rounded-xl text-xs font-semibold transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Protocol
+                        </button>
+                    </div>
+
+                    <div id="habits-list-container" class="space-y-3">
+                        <!-- Dynamic habits rendering -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: FOCUS CHAMBER (POMODORO) -->
+            <div id="tab-content-pomodoro" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-8 rounded-3xl max-w-xl mx-auto text-center relative overflow-hidden">
+                    <div class="absolute -top-32 -left-32 w-64 h-64 bg-apex-cyan/15 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="flex items-center justify-center gap-2 mb-6 bg-dark-800/90 p-1.5 rounded-xl border border-slate-700 max-w-xs mx-auto">
+                        <button onclick="setTimerMode('pomodoro')" id="timer-mode-pomodoro" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-apex-cyan text-dark-950 transition-all">Focus (25m)</button>
+                        <button onclick="setTimerMode('shortBreak')" id="timer-mode-shortBreak" class="flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all">Rest (5m)</button>
+                    </div>
+
+                    <div class="my-10 relative">
+                        <div id="timer-display" class="text-7xl lg:text-8xl font-black font-mono tracking-tighter text-white glow-text">
+                            25:00
+                        </div>
+                        <p id="timer-status-label" class="text-xs font-mono uppercase tracking-widest text-apex-cyan mt-3">Ready for Focus Protocol</p>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="timer-toggle-btn" onclick="toggleTimer()" class="px-8 py-3.5 bg-apex-cyan hover:bg-apex-cyan/90 text-dark-950 font-extrabold rounded-xl shadow-lg glow-box transition-all text-sm">
+                            <i class="fa-solid fa-play mr-2"></i> Initiate Focus
+                        </button>
+                        <button onclick="resetTimer()" class="px-6 py-3.5 bg-dark-800 hover:bg-dark-700 border border-slate-700 text-slate-300 font-bold rounded-xl transition-all text-sm">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: APEXFLOW AI + DUAL VOICE ENGINE -->
+            <div id="tab-content-ai" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-6 rounded-3xl flex flex-col h-[calc(100vh-14rem)]">
+                    <!-- AI Control Toolbar -->
+                    <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-apex-violet to-apex-cyan text-dark-950 flex items-center justify-center font-black text-lg shadow glow-box">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-white text-base">ApexFlow AI Workspace Agent</h3>
+                                <p class="text-xs text-slate-400">Gemini 3 Flash LLM + Voice Input & Speech Output</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <!-- Voice Input (STT) Button -->
+                            <button id="mic-toggle-btn" onclick="toggleVoiceInput()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-dark-800 border border-slate-700 text-xs font-mono text-apex-cyan hover:border-apex-cyan transition-all">
+                                <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                                Voice Input
+                            </button>
+                            <!-- TTS Output Toggle Button -->
+                            <button id="tts-toggle-btn" onclick="toggleTTSVoice()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-dark-800 border border-slate-700 text-xs font-mono text-apex-cyan hover:border-apex-cyan transition-all">
+                                <i id="tts-icon" class="fa-solid fa-volume-high"></i>
+                                Audio: <span id="tts-status-text" class="font-bold">ON</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chat Log -->
+                    <div id="ai-chat-messages" class="flex-1 overflow-y-auto py-4 space-y-4 pr-2">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-apex-violet/25 text-apex-violet border border-apex-violet/40 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                            <div class="glass-panel p-4 rounded-2xl max-w-xl text-sm text-slate-200 leading-relaxed">
+                                Welcome, Operator! Main <strong>ApexFlow AI Agent</strong> hoon. Main Gemini 3 Flash LLM power se connected hoon. Aap microphone icon dabakar bol sakte hain ya message type karke complex coding, math, science, schedule creation, ya general knowledge ke questions pooch sakte hain!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Bar -->
+                    <div class="pt-4 border-t border-slate-800">
+                        <form onsubmit="handleAIChatSubmit(event)" class="flex gap-2">
+                            <input type="text" id="ai-chat-input" placeholder="Ask ApexFlow AI anything or click mic to talk..." class="flex-1 px-4 py-3 bg-dark-800/90 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-apex-cyan text-sm">
+                            <button type="button" onclick="toggleVoiceInput()" class="px-4 py-3 bg-dark-800 hover:bg-dark-700 border border-slate-700 text-apex-cyan rounded-xl text-sm transition-all" title="Listen Voice Prompt">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                            <button type="submit" id="ai-send-btn" class="px-6 py-3 bg-gradient-to-r from-apex-cyan to-apex-violet hover:opacity-90 text-dark-950 font-bold rounded-xl text-sm shadow-lg glow-box transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Ask
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: ARCHITECTURE & SETUP GUIDE -->
+            <div id="tab-content-setup" class="tab-content hidden space-y-6">
+                <div class="glass-panel p-8 rounded-3xl max-w-3xl mx-auto space-y-6 text-slate-300">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">ApexFlow Technical Setup & Deployment Guide</h3>
+                            <p class="text-xs text-slate-400">Complete breakdown of free hosting, database configuration, and LLM voice integration.</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 text-sm leading-relaxed">
+                        <div class="p-5 rounded-2xl bg-dark-800/80 border border-slate-700">
+                            <h4 class="font-bold text-white mb-2 text-base flex items-center gap-2"><span class="text-apex-cyan">01.</span> Free Hosting on Vercel / GitHub Pages</h4>
+                            <ol class="list-decimal list-inside space-y-2 mt-2 text-xs text-slate-300">
+                                <li>Copy this entire code into a local file named <code class="text-apex-cyan font-mono">index.html</code>.</li>
+                                <li>Push the code to a new repository on <a href="https://github.com" target="_blank" class="text-apex-cyan underline">GitHub</a>.</li>
+                                <li>Import your repository to <a href="https://vercel.com" target="_blank" class="text-apex-cyan underline">Vercel</a> or enable GitHub Pages for 100% free hosting.</li>
+                            </ol>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-dark-800/80 border border-slate-700">
+                            <h4 class="font-bold text-white mb-2 text-base flex items-center gap-2"><span class="text-apex-cyan">02.</span> Voice Recognition (STT) & Speech Synthesis (TTS)</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Application supports browser-native <strong>SpeechRecognition API</strong> for listening to your voice input, along with <strong>Web Speech Synthesis API</strong> for speaking LLM generated answers dynamically back to you.
+                            </p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-dark-800/80 border border-slate-700">
+                            <h4 class="font-bold text-white mb-2 text-base flex items-center gap-2"><span class="text-apex-cyan">03.</span> Gemini 3 Flash LLM Grounded Intelligence</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Direct integration with Google's Gemini 3 Flash model enables solving complex programming questions, mathematical proofs, scientific inquiries, and automated schedule organization.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- CREATE TASK MODAL -->
+    <div id="task-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-3xl relative shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white">Deploy Task Objective</h3>
+                <button onclick="closeNewTaskModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleCreateTask(event)" class="space-y-4">
+                <div>
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Objective Title</label>
+                    <input type="text" id="modal-task-title" required placeholder="e.g. Build Quantum Engine Model" class="w-full mt-1 px-4 py-2.5 bg-dark-800 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-apex-cyan">
+                </div>
+                <div>
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Priority & Category</label>
+                    <div class="grid grid-cols-2 gap-4 mt-1">
+                        <select id="modal-task-priority" class="px-4 py-2.5 bg-dark-800 border border-slate-700 rounded-xl text-slate-300 text-sm focus:outline-none focus:border-apex-cyan">
+                            <option value="Normal">Normal (+25 XP)</option>
+                            <option value="High">High (+50 XP)</option>
+                            <option value="Urgent">Urgent (+100 XP)</option>
+                        </select>
+                        <select id="modal-task-category" class="px-4 py-2.5 bg-dark-800 border border-slate-700 rounded-xl text-slate-300 text-sm focus:outline-none focus:border-apex-cyan">
+                            <option value="Work">Work</option>
+                            <option value="Code">Code</option>
+                            <option value="Health">Health</option>
+                            <option value="Personal">Personal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="closeNewTaskModal()" class="px-4 py-2 bg-dark-800 text-slate-300 hover:text-white rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-apex-cyan text-dark-950 font-bold rounded-xl text-xs shadow glow-box">Save Objective</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CREATE HABIT MODAL -->
+    <div id="habit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-md p-6 rounded-3xl relative shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white">Add Habit Continuity Protocol</h3>
+                <button onclick="closeNewHabitModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleCreateHabit(event)" class="space-y-4">
+                <div>
+                    <label class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Protocol Name</label>
+                    <input type="text" id="modal-habit-name" required placeholder="e.g. 60m Deep Work Protocol" class="w-full mt-1 px-4 py-2.5 bg-dark-800 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-apex-cyan">
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="closeNewHabitModal()" class="px-4 py-2 bg-dark-800 text-slate-300 hover:text-white rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-apex-cyan text-dark-950 font-bold rounded-xl text-xs shadow glow-box">Deploy Protocol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- SCRIPT APPLICATION CONTROLLER -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Application Context & State
+        let currentUser = null;
+        let authMode = 'login';
+        let isTTSEnabled = true;
+        let isListening = false;
+        let speechRecognizer = null;
+
+        // Gamification & Workspace Data
+        let tasks = [];
+        let habits = [];
+        let userStats = { streak: 1, xp: 120, rank: 'Apprentice', personalRecord: 4 };
+        let timerInterval = null;
+        let timerTimeLeft = 1500;
+        let timerRunning = false;
+        let currentTaskFilter = 'all';
+
+        // Firebase Configuration fallback setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'apexflow-app-v4.5';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        let app, db, auth;
+
+        if (firebaseConfig) {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            } catch (err) { console.error("Firebase Initialization Fallback:", err); }
+        }
+
+        // Web Audio Synthesizer for UI Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.04);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.06);
+                    osc.frequency.setValueAtTime(783, audioCtx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (err) {}
+        }
+
+        // Text To Speech Synthesis
+        function speakText(text) {
+            if (!isTTSEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const cleanText = text.replace(/[*_#`]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 1.05;
+            utterance.pitch = 1.0;
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(v => v.lang.includes('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')));
+            if (preferred) utterance.voice = preferred;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Voice Input Recognition setup
+        window.toggleVoiceInput = function() {
+            playSound('click');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("Speech Recognition not supported in this browser.", "error");
+                return;
+            }
+
+            const micBtn = document.getElementById('mic-toggle-btn');
+            const micIcon = document.getElementById('mic-icon');
+            const inputField = document.getElementById('ai-chat-input');
+
+            if (isListening) {
+                speechRecognizer?.stop();
+                isListening = false;
+                micIcon.className = "fa-solid fa-microphone";
+                micBtn.classList.remove("border-apex-cyan", "text-apex-cyan");
+                showToast("Voice listening stopped.");
+            } else {
+                speechRecognizer = new SpeechRecognition();
+                speechRecognizer.continuous = false;
+                speechRecognizer.interimResults = false;
+                speechRecognizer.lang = 'en-US';
+
+                speechRecognizer.onstart = () => {
+                    isListening = true;
+                    micIcon.className = "fa-solid fa-microphone text-red-400 animate-pulse";
+                    micBtn.classList.add("border-apex-cyan", "text-apex-cyan");
+                    showToast("Listening... Speak your prompt clearly.");
+                };
+
+                speechRecognizer.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    inputField.value = transcript;
+                    isListening = false;
+                    micIcon.className = "fa-solid fa-microphone";
+                    showToast("Voice captured!");
+                    handleAIChatSubmit(new Event('submit'));
+                };
+
+                speechRecognizer.onerror = () => {
+                    isListening = false;
+                    micIcon.className = "fa-solid fa-microphone";
+                    showToast("Voice input error.", "error");
+                };
+
+                speechRecognizer.start();
+            }
+        };
+
+        window.toggleTTSVoice = function() {
+            playSound('click');
+            isTTSEnabled = !isTTSEnabled;
+            document.getElementById('tts-status-text').textContent = isTTSEnabled ? 'ON' : 'OFF';
+            document.getElementById('tts-icon').className = isTTSEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-slate-500';
+            if (!isTTSEnabled) window.speechSynthesis.cancel();
+            showToast(`Voice Speech Output ${isTTSEnabled ? 'Activated' : 'Muted'}.`);
+        };
+
+        window.showToast = function(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `glass-panel px-4 py-3 rounded-xl text-xs font-semibold text-white flex items-center gap-3 shadow-xl pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 ${type === 'success' ? 'border-l-4 border-l-emerald-400' : 'border-l-4 border-l-apex-cyan'}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-info text-apex-cyan'}"></i> ${msg}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        // App Authentication Initialization
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (auth) {
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        onUserAuthenticated();
+                    } else {
+                        document.getElementById('auth-screen').classList.remove('hidden');
+                        document.getElementById('app-container').classList.add('hidden');
+                    }
+                });
+            } else {
+                // Check local storage persistent session
+                const cachedUser = localStorage.getItem('apex_user');
+                if (cachedUser) {
+                    currentUser = JSON.parse(cachedUser);
+                    onUserAuthenticated();
+                }
+            }
+        });
+
+        window.switchAuthMode = function(mode) {
+            playSound('click');
+            authMode = mode;
+            document.getElementById('tab-login').className = mode === 'login' ? "flex-1 py-2 text-sm font-semibold rounded-lg bg-apex-cyan text-dark-950 shadow transition-all" : "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all";
+            document.getElementById('tab-signup').className = mode === 'signup' ? "flex-1 py-2 text-sm font-semibold rounded-lg bg-apex-cyan text-dark-950 shadow transition-all" : "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all";
+            document.getElementById('name-field').classList.toggle('hidden', mode === 'login');
+        };
+
+        window.handleAuth = async function(e) {
+            e.preventDefault();
+            playSound('click');
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const name = document.getElementById('auth-name').value;
+
+            if (!auth) {
+                currentUser = { uid: 'user-' + btoa(email).slice(0, 10), email, displayName: name || email.split('@')[0] };
+                localStorage.setItem('apex_user', JSON.stringify(currentUser));
+                onUserAuthenticated();
+                showToast("Workspace initialized.");
+                return;
+            }
+
+            try {
+                if (authMode === 'signup') {
+                    const cred = await createUserWithEmailAndPassword(auth, email, password);
+                    currentUser = cred.user;
+                } else {
+                    const cred = await signInWithEmailAndPassword(auth, email, password);
+                    currentUser = cred.user;
+                }
+                onUserAuthenticated();
+            } catch (err) { showToast(err.message, 'error'); }
+        };
+
+        window.handleGoogleSignIn = async function() {
+            playSound('click');
+            if (!auth) {
+                quickGuestAccess();
+                return;
+            }
+            try {
+                const provider = new GoogleAuthProvider();
+                const cred = await signInWithPopup(auth, provider);
+                currentUser = cred.user;
+                onUserAuthenticated();
+            } catch (err) { showToast(err.message, 'error'); }
+        };
+
+        window.quickGuestAccess = function() {
+            playSound('click');
+            currentUser = { uid: 'guest-operator-777', email: 'guest@apexflow.ai', displayName: 'Guest Operator' };
+            localStorage.setItem('apex_user', JSON.stringify(currentUser));
+            onUserAuthenticated();
+            showToast("Guest Session Active.");
+        };
+
+        window.handleLogout = async function() {
+            playSound('click');
+            if (auth) await signOut(auth);
+            localStorage.removeItem('apex_user');
+            currentUser = null;
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            showToast("Session Terminated.");
+        };
+
+        function onUserAuthenticated() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            const email = currentUser.email || 'operator@apexflow.ai';
+            const name = currentUser.displayName || email.split('@')[0];
+            document.getElementById('user-display-name').textContent = name;
+            document.getElementById('user-display-email').textContent = email;
+            document.getElementById('user-avatar').textContent = name.substring(0, 2).toUpperCase();
+            loadWorkspaceData();
+            triggerAIAnalysis();
+        }
+
+        // Data Storage & Synchronization
+        function loadWorkspaceData() {
+            const userId = currentUser.uid;
+            if (db && auth && currentUser.uid !== 'guest-operator-777') {
+                const tasksCol = collection(db, 'artifacts', appId, 'users', userId, 'tasks');
+                const habitsCol = collection(db, 'artifacts', appId, 'users', userId, 'habits');
+                onSnapshot(tasksCol, (snap) => {
+                    tasks = [];
+                    snap.forEach(d => tasks.push({ id: d.id, ...d.data() }));
+                    renderTasks();
+                    updateGamificationStats();
+                });
+                onSnapshot(habitsCol, (snap) => {
+                    habits = [];
+                    snap.forEach(d => habits.push({ id: d.id, ...d.data() }));
+                    renderHabits();
+                });
+            } else {
+                // LocalStorage persistence fallback
+                const storedTasks = localStorage.getItem(`apex_tasks_${userId}`);
+                const storedHabits = localStorage.getItem(`apex_habits_${userId}`);
+                const storedStats = localStorage.getItem(`apex_stats_${userId}`);
+                tasks = storedTasks ? JSON.parse(storedTasks) : [
+                    { id: 't1', title: 'Calibrate ApexFlow Neural Assistant', completed: true, priority: 'Urgent', category: 'Code' },
+                    { id: 't2', title: 'Complete Deep Work Focus Sprint', completed: false, priority: 'High', category: 'Work' }
+                ];
+                habits = storedHabits ? JSON.parse(storedHabits) : [
+                    { id: 'h1', name: '45m Deep Code Sprint', completedToday: true },
+                    { id: 'h2', name: 'Hydration Target 3L', completedToday: false }
+                ];
+                if (storedStats) userStats = JSON.parse(storedStats);
+                renderTasks();
+                renderHabits();
+                updateGamificationStats();
+            }
+        }
+
+        function saveLocalData() {
+            if (!currentUser) return;
+            const userId = currentUser.uid;
+            localStorage.setItem(`apex_tasks_${userId}`, JSON.stringify(tasks));
+            localStorage.setItem(`apex_habits_${userId}`, JSON.stringify(habits));
+            localStorage.setItem(`apex_stats_${userId}`, JSON.stringify(userStats));
+        }
+
+        // Navigation Controller
+        window.switchTab = function(tabId) {
+            playSound('click');
+            const tabs = ['dashboard', 'tasks', 'habits', 'pomodoro', 'ai', 'setup'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-content-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    if (btn) btn.className = "nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-apex-cyan/10 text-apex-cyan border border-apex-cyan/30 shadow-sm";
+                } else {
+                    el.classList.add('hidden');
+                    if (btn) btn.className = "nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-dark-800/60 transition-all";
+                }
+            });
+        };
+
+        // Task & Habit Actions
+        window.openNewTaskModal = () => document.getElementById('task-modal').classList.remove('hidden');
+        window.closeNewTaskModal = () => document.getElementById('task-modal').classList.add('hidden');
+        window.openNewHabitModal = () => document.getElementById('habit-modal').classList.remove('hidden');
+        window.closeNewHabitModal = () => document.getElementById('habit-modal').classList.add('hidden');
+
+        window.handleCreateTask = async function(e) {
+            e.preventDefault();
+            playSound('success');
+            const title = document.getElementById('modal-task-title').value;
+            const priority = document.getElementById('modal-task-priority').value;
+            const category = document.getElementById('modal-task-category').value;
+            const newTask = { title, priority, category, completed: false, createdAt: Date.now() };
+
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'tasks'), newTask);
+            } else {
+                newTask.id = 'task-' + Date.now();
+                tasks.push(newTask);
+                saveLocalData();
+                renderTasks();
+                updateGamificationStats();
+            }
+            closeNewTaskModal();
+            document.getElementById('modal-task-title').value = '';
+            showToast("Task Objective Deployed.");
+        };
+
+        window.handleQuickAddTask = async function(e) {
+            e.preventDefault();
+            playSound('success');
+            const titleInput = document.getElementById('quick-task-title');
+            const newTask = { title: titleInput.value, priority: document.getElementById('quick-task-priority').value, category: 'Work', completed: false, createdAt: Date.now() };
+
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'tasks'), newTask);
+            } else {
+                newTask.id = 'task-' + Date.now();
+                tasks.push(newTask);
+                saveLocalData();
+                renderTasks();
+                updateGamificationStats();
+            }
+            titleInput.value = '';
+            showToast("Quick Objective Deployed.");
+        };
+
+        window.toggleTaskComplete = async function(id) {
+            playSound('success');
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const newStatus = !task.completed;
+
+            if (newStatus) {
+                // Award Gamification XP & Trigger Celebration
+                confetti({ particleCount: 60, spread: 70, origin: { y: 0.8 } });
+                const xpGain = task.priority === 'Urgent' ? 100 : task.priority === 'High' ? 50 : 25;
+                userStats.xp += xpGain;
+                showToast(`Objective Executed! +${xpGain} XP Awarded.`);
+            }
+
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await updateDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tasks', id), { completed: newStatus });
+            } else {
+                task.completed = newStatus;
+                saveLocalData();
+                renderTasks();
+                updateGamificationStats();
+            }
+        };
+
+        window.deleteTask = async function(id) {
+            playSound('click');
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tasks', id));
+            } else {
+                tasks = tasks.filter(t => t.id !== id);
+                saveLocalData();
+                renderTasks();
+                updateGamificationStats();
+            }
+        };
+
+        window.filterTasks = function(filter) {
+            currentTaskFilter = filter;
+            renderTasks();
+        };
+
+        function renderTasks() {
+            const container = document.getElementById('tasks-list-container');
+            const dashContainer = document.getElementById('dashboard-recent-tasks');
+            let filtered = tasks;
+            if (currentTaskFilter === 'active') filtered = tasks.filter(t => !t.completed);
+            if (currentTaskFilter === 'completed') filtered = tasks.filter(t => t.completed);
+
+            container.innerHTML = filtered.length === 0 ? `<div class="glass-panel p-8 rounded-2xl text-center text-slate-500 font-mono text-sm">No tasks in this matrix view.</div>` : filtered.map(t => `
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between gap-4 glass-panel-hover">
+                    <div class="flex items-center gap-4 flex-1">
+                        <button onclick="toggleTaskComplete('${t.id}')" class="w-6 h-6 rounded-lg border ${t.completed ? 'bg-emerald-400 border-emerald-400 text-dark-950' : 'border-slate-600'} flex items-center justify-center font-bold transition-all">
+                            ${t.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                        </button>
+                        <div class="${t.completed ? 'line-through text-slate-500' : ''}">
+                            <h4 class="text-sm font-bold text-white">${t.title}</h4>
+                            <span class="text-[10px] font-mono text-apex-cyan px-2 py-0.5 rounded bg-apex-cyan/10 border border-apex-cyan/20">${t.priority}</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteTask('${t.id}')" class="text-slate-500 hover:text-red-400 p-2 transition-all"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                </div>
+            `).join('');
+
+            dashContainer.innerHTML = tasks.filter(t => !t.completed).slice(0, 3).map(t => `
+                <div class="flex items-center justify-between p-3 rounded-xl bg-dark-800/70 border border-slate-800">
+                    <span class="text-xs font-semibold text-white">${t.title}</span>
+                    <span class="text-[9px] font-mono text-apex-cyan px-2 py-0.5 rounded bg-apex-cyan/10 border border-apex-cyan/20">${t.priority}</span>
+                </div>
+            `).join('') || `<div class="text-slate-500 text-xs italic">All objectives completed.</div>`;
+        }
+
+        window.handleCreateHabit = async function(e) {
+            e.preventDefault();
+            playSound('success');
+            const name = document.getElementById('modal-habit-name').value;
+            const newHabit = { name, completedToday: false };
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'habits'), newHabit);
+            } else {
+                newHabit.id = 'h-' + Date.now();
+                habits.push(newHabit);
+                saveLocalData();
+                renderHabits();
+            }
+            closeNewHabitModal();
+        };
+
+        window.toggleHabitComplete = async function(id) {
+            playSound('success');
+            const habit = habits.find(h => h.id === id);
+            if (!habit) return;
+            habit.completedToday = !habit.completedToday;
+            if (habit.completedToday) {
+                confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+                userStats.xp += 30;
+                showToast("Habit Protocol Executed! +30 XP");
+            }
+            if (db && currentUser && currentUser.uid !== 'guest-operator-777') {
+                await updateDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'habits', id), { completedToday: habit.completedToday });
+            } else {
+                saveLocalData();
+                renderHabits();
+                updateGamificationStats();
+            }
+        };
+
+        function renderHabits() {
+            document.getElementById('habits-list-container').innerHTML = habits.map(h => `
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between gap-4 glass-panel-hover">
+                    <span class="text-sm font-bold text-white">${h.name}</span>
+                    <button onclick="toggleHabitComplete('${h.id}')" class="px-4 py-2 rounded-xl text-xs font-bold ${h.completedToday ? 'bg-amber-400 text-dark-950 shadow' : 'bg-dark-800 border border-slate-700 text-slate-400'} transition-all">
+                        <i class="fa-solid fa-fire mr-1"></i> ${h.completedToday ? 'Completed' : 'Execute'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateGamificationStats() {
+            document.getElementById('stat-completed-tasks').textContent = tasks.filter(t => t.completed).length;
+            document.getElementById('stat-active-tasks').textContent = tasks.filter(t => !t.completed).length;
+            document.getElementById('stat-total-xp').textContent = userStats.xp;
+            document.getElementById('stat-personal-record').textContent = Math.max(userStats.personalRecord, tasks.filter(t => t.completed).length);
+
+            // Level & XP Bar
+            const currentRank = userStats.xp >= 1000 ? 'Master Operator' : userStats.xp >= 500 ? 'Cyber Sentinel' : 'Apprentice';
+            const progress = Math.min(100, (userStats.xp % 500) / 5);
+            document.getElementById('user-rank-label').textContent = `Rank: ${currentRank}`;
+            document.getElementById('user-xp-label').textContent = `${userStats.xp} / 500 XP`;
+            document.getElementById('user-xp-bar').style.width = `${progress}%`;
+            document.getElementById('header-streak-count').textContent = userStats.streak;
+        }
+
+        // Focus Pomodoro Timer
+        window.setTimerMode = function(mode) {
+            playSound('click');
+            timerRunning = false;
+            clearInterval(timerInterval);
+            timerTimeLeft = mode === 'pomodoro' ? 1500 : 300;
+            document.getElementById('timer-mode-pomodoro').className = mode === 'pomodoro' ? "flex-1 py-1.5 text-xs font-bold rounded-lg bg-apex-cyan text-dark-950 transition-all" : "flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+            document.getElementById('timer-mode-shortBreak').className = mode === 'shortBreak' ? "flex-1 py-1.5 text-xs font-bold rounded-lg bg-apex-cyan text-dark-950 transition-all" : "flex-1 py-1.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all";
+            updateTimerDisplay();
+        };
+
+        window.toggleTimer = function() {
+            playSound('click');
+            const btn = document.getElementById('timer-toggle-btn');
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                btn.innerHTML = `<i class="fa-solid fa-play mr-2"></i> Resume Focus`;
+            } else {
+                timerRunning = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause mr-2"></i> Pause Focus`;
+                timerInterval = setInterval(() => {
+                    if (timerTimeLeft > 0) {
+                        timerTimeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerRunning = false;
+                        confetti({ particleCount: 100, spread: 80 });
+                        userStats.xp += 100;
+                        updateGamificationStats();
+                        showToast("Focus Chamber Protocol Complete! +100 XP");
+                    }
+                }, 1000);
+            }
+        };
+
+        window.resetTimer = function() {
+            playSound('click');
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerTimeLeft = 1500;
+            document.getElementById('timer-toggle-btn').innerHTML = `<i class="fa-solid fa-play mr-2"></i> Initiate Focus`;
+            updateTimerDisplay();
+        };
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerTimeLeft / 60).toString().padStart(2, '0');
+            const secs = (timerTimeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${mins}:${secs}`;
+        }
+
+        // Gemini AI Integration
+        window.triggerAIAnalysis = async function() {
+            const prompt = `Give a 2-sentence inspirational cybernetic productivity tip for an operator with ${tasks.filter(t => !t.completed).length} pending tasks.`;
+            const text = await callGeminiAPI(prompt);
+            document.getElementById('ai-insight-title').textContent = "ApexFlow Intelligence Insight";
+            document.getElementById('ai-insight-text').textContent = text;
+        };
+
+        window.handleAIChatSubmit = async function(e) {
+            if (e) e.preventDefault();
+            playSound('click');
+            const inputField = document.getElementById('ai-chat-input');
+            const prompt = inputField.value.trim();
+            if (!prompt) return;
+
+            const chatContainer = document.getElementById('ai-chat-messages');
+            chatContainer.innerHTML += `<div class="flex justify-end"><div class="glass-panel p-4 rounded-2xl max-w-xl text-sm text-white bg-apex-cyan/15 border-apex-cyan/30">${prompt}</div></div>`;
+            inputField.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            chatContainer.innerHTML += `
+                <div id="${loadingId}" class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-apex-violet/25 text-apex-violet border border-apex-violet/40 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                    <div class="glass-panel p-4 rounded-2xl text-xs text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin text-apex-cyan"></i> Gemini 3 LLM Computing...
+                    </div>
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const aiResponse = await callGeminiAPI(prompt, true);
+            document.getElementById(loadingId)?.remove();
+
+            chatContainer.innerHTML += `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-apex-violet/25 text-apex-violet border border-apex-violet/40 flex items-center justify-center shrink-0 font-bold text-xs">AI</div>
+                    <div class="glass-panel p-4 rounded-2xl max-w-xl text-sm text-slate-200 leading-relaxed">${aiResponse}</div>
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            speakText(aiResponse);
+        };
+
+        async function callGeminiAPI(prompt, enableSearch = false) {
+            const systemPrompt = "You are ApexFlow AI, a cutting-edge futuristic artificial intelligence assistant. Answer questions with extreme accuracy, clarity, and deep knowledge. Handle coding, math, science, and scheduling tasks flawlessly.";
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+            if (enableSearch) payload.tools = [{ "google_search": {} }];
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                return result.candidates?.[0]?.content?.parts?.[0]?.text || "ApexFlow AI query complete.";
+            } catch (err) {
+                return "ApexFlow AI operational connection error.";
+            }
+        }
+    </script>
+</body>
+</html>
